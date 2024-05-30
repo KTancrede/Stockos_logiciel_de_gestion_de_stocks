@@ -8,7 +8,7 @@ body {
     font-family: Arial, sans-serif;
 }
 
-.container {
+.login-container {
     width: 100%;
     max-width: 400px;
     padding: 20px;
@@ -50,7 +50,7 @@ body {
     padding: 10px 20px;
     border: none;
     border-radius: 4px;
-    background-color: #007bff;
+    background-color: #e84927;
     color: white;
     font-size: 16px;
     cursor: pointer;
@@ -58,33 +58,24 @@ body {
 }
 
 .form_login input[type="submit"]:hover {
-    background-color: #0056b3;
+    background-color: #e83627;
 }
 
-#error_message{
-    color:red;
+#error_message {
+    color: red;
 }
 
-/* Styles pour la barre horizontale */
-header {
-    text-align: center;
-    background-color: #333; /* Couleur de fond de la barre */
-    color: #fff; /* Couleur du texte */
-    padding: 10px 0; /* Espacement intérieur */
-    position: fixed; /* Position fixe */
-    width: 100%; /* Largeur de la barre de navigation */
-    top: 0; /* Alignement en haut */
-    z-index: 1000; /* Profondeur z pour s'assurer que la barre est au-dessus du contenu */
-}
-
-/* Styles pour le logo */
-.logo {
-    font-size: 24px; /* Taille de la police du logo */
-}
-
-.container {
+/* Styles pour la page d'accueil */
+.home-container {
     display: flex;
     flex-wrap: wrap;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    text-align: center;
 }
 
 .button-group {
@@ -107,3 +98,18 @@ header {
     background-color: #e83627;
 }
 
+/* Styles pour la barre horizontale */
+header {
+    text-align: center;
+    background-color: #333; /* Couleur de fond de la barre */
+    color: #fff; /* Couleur du texte */
+    padding: 10px 0; /* Espacement intérieur */
+    position: fixed; /* Position fixe */
+    width: 100%; /* Largeur de la barre de navigation */
+    top: 0; /* Alignement en haut */
+    z-index: 1000; /* Profondeur z pour s'assurer que la barre est au-dessus du contenu */
+}
+
+.logo {
+    font-size: 34px; /* Taille de la police du logo */
+}

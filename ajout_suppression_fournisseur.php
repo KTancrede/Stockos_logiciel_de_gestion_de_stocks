@@ -1,6 +1,4 @@
 <?php
-
-
 ?>
 
 <!DOCTYPE html PUBLIC '-//W3C//DTD XHTML Basic 1.1//EN'
@@ -10,7 +8,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel='shortcut icon' type='image/x-icon' href='images/favicon/favicon.ico'/> 
-    <title>Inventaire</title>
+    <title>Ajout Suppression Fournisseurs</title>
     <link rel="stylesheet" href="style.css"> 
 </head>
 <body>

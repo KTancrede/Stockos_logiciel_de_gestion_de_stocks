@@ -14,6 +14,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel='shortcut icon' type='image/x-icon' href='images/favicon/favicon.ico'/> 
     <title>Page d'accueil - Stockos</title>
     <link rel="stylesheet" href="style.css"> 
 </head>
@@ -24,19 +25,18 @@
         </div>
     </header>
     <main>
-    <div class="container">
+    <div class="home-container">
         <div class="button-group">
             <a href="inventaire.php" class="button">Faire l'inventaire</a>
-            <a href="page2.php" class="button">Affichage des stocks</a>
-            <a href="page3.php" class="button">Ajout/Suppression de produit</a>
+            <a href="affichage_stock.php" class="button">Affichage des stocks</a>
+            <a href="ajout_suppression.php" class="button">Ajout/Suppression de produit</a>
         </div>
         <div class="button-group">
-            <a href="page4.php" class="button">Ajout/Suppression de fournisseur</a>
+            <a href="ajout_suppression_fournisseur.php" class="button">Ajout/Suppression de fournisseur</a>
             <a href="page5.php" class="button">Affichage liens produits-fournisseurs</a>
             <a href="page6.php" class="button">Autre</a>
         </div>
-</div>
-
+    </div>
     </main>
 </body>
 </html>

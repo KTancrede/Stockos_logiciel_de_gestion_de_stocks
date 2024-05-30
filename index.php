@@ -24,7 +24,7 @@ $html = "
     <title>Connexion</title>
 </head>
 <body>
-<div class='container'>
+<div class='login-container'>
     <form class='form_login' method='POST'>
         <h2>Connexion</h2>
         <label for='login'>Identifiant</label>
