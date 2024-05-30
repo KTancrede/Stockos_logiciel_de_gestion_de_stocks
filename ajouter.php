@@ -1,35 +1,43 @@
 <?php
 include 'connexion.php';
+$message="";
 
-function ajouter_produit($nom, $type, $marque, $quantite, $fournisseur, $prix) {
+function ajouter_produit($nom, $type, $marque, $quantite, $fournisseur, $prix, $quantite_max) {
     $conn = connectDB();
-    $sql = "INSERT INTO produits (nom, type, marque, quantite, fournisseur, prix) VALUES (?, ?, ?, ?, ?, ?)";
-    $stmt = $conn->prepare($sql);
+    if ($conn) {
+        try {
+            $sql = "INSERT INTO produits (nom, type, marque, quantite, fournisseur, prix, quantite_max) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            $stmt = $conn->prepare($sql);
+            
+            // Utilisation de bindParam avec des positions
+            $stmt->bindParam(1, $nom);
+            $stmt->bindParam(2, $type);
+            $stmt->bindParam(3, $marque);
+            $stmt->bindParam(4, $quantite);
+            $stmt->bindParam(5, $fournisseur);
+            $stmt->bindParam(6, $prix);
+            $stmt->bindParam(7, $quantite_max);
 
-    if ($stmt === false) {
-        die("Erreur de préparation de la requête: " . $conn->error);
+            if ($stmt->execute()) {
+                $message="Produit ajouté avec succès";
+            } else {
+                echo "Erreur: " . implode(", ", $stmt->errorInfo());
+            }
+        } catch (PDOException $e) {
+            $message = "Erreur: " . $e->getMessage();
+        }
     }
-
-    $stmt->bind_param("sssdsd", $nom, $type, $marque, $quantite, $fournisseur, $prix);
-
-    if ($stmt->execute()) {
-        echo "Produit ajouté avec succès.";
-    } else {
-        echo "Erreur: " . $stmt->error;
-    }
-
-    $stmt->close();
-    $conn->close();
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $nom = $_POST['nom'];
-    $type = $_POST['type'];
-    $marque = $_POST['marque'];
-    $quantite = $_POST['quantite'];
-    $fournisseur = $_POST['fournisseur'];
-    $prix = $_POST['prix'];
-    ajouter_produit($nom, $type, $marque, $quantite, $fournisseur, $prix);
+    $nom = htmlspecialchars($_POST['nom']);
+    $type = htmlspecialchars($_POST['type']);
+    $marque = htmlspecialchars($_POST['marque']);
+    $quantite = htmlspecialchars($_POST['quantite']);
+    $fournisseur = htmlspecialchars($_POST['fournisseur']);
+    $prix = htmlspecialchars($_POST['prix']);
+    $quantite_max=htmlspecialchars($_POST['quantite_max']);
+    ajouter_produit($nom, $type, $marque, $quantite, $fournisseur, $prix, $quantite_max);
 }
 ?>
 
@@ -44,10 +52,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
     <header>
-        <div class="logo">
+        <a href="page_acceuil.php" class="logo">
             Stockos
-        </div>
+        </a>
     </header>
+
     <main>
         <div class="form_ajouter_container">
             <h2>Ajouter un Produit</h2>
@@ -57,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <label for="type">Type</label>
                 <select name="type" id="type" required>
                     <option value="" disabled selected>Choisir un type</option>
-                    <option value="fû">Fû</option>
+                    <option value="fû">Fût</option>
                     <option value="soft">Soft</option>
                     <option value="hard">Hard</option>
                     <option value="vin">Vin</option>
@@ -70,9 +79,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <input type="text" name="fournisseur" id="fournisseur" required><br>
                 <label for="prix">Prix (€)</label>
                 <input type="number" step="0.01" name="prix" id="prix" required><br>
+                <label for="quantite_max">Quantité max stockable</label>
+                <input type="number" name="quantite_max" id="quantite_max" required><br>
                 <input type="submit" value="Ajouter">
             </form>
+            <?php
+            if ($message) {
+                echo "<div id='msg_ajout'>$message</div>";
+            }
+            ?>
         </div>
     </main>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        setTimeout(function() {
+            var msg = document.getElementById('msg_ajout');
+            if (msg) {
+                msg.style.display = 'none';
+            }
+        }, 5000); 
+    });
+    </script>
+
 </body>
 </html>

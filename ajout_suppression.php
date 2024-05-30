@@ -10,10 +10,11 @@
 </head>
 <body>
     <header>
-        <div class="logo">
+        <a href="page_acceuil.php" class="logo">
             Stockos
-        </div>
+        </a>
     </header>
+
     <main>
         <div class="button-container">
             <button class="action-button add-button" onclick="window.location.href='ajouter.php'">+</button>

@@ -1,30 +1,41 @@
 <?php
 include 'connexion.php';
 
-function supprimer_produit($id) {
+// Fonction pour récupérer tous les produits
+function getAllProducts() {
     $conn = connectDB();
-    $sql = "DELETE FROM produits WHERE id = ?";
-    $stmt = $conn->prepare($sql);
-
-    if ($stmt === false) {
-        die("Erreur de préparation de la requête: " . $conn->error);
+    $sql = "SELECT * FROM produits";
+    $stmt = $conn->query($sql);
+    $products = [];
+    
+    if ($stmt) {
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $products[] = $row;
+        }
     }
-
-    $stmt->bind_param("i", $id);
-
-    if ($stmt->execute()) {
-        echo "Produit supprimé avec succès.";
-    } else {
-        echo "Erreur: " . $stmt->error;
-    }
-
-    $stmt->close();
-    $conn->close();
+    
+    return $products;
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $id = $_POST['id'];
-    supprimer_produit($id);
+
+// Fonction pour supprimer les produits sélectionnés
+function supprimer_produits($ids) {
+    $conn = connectDB();
+    $sql = "DELETE FROM produits WHERE id IN (" . implode(',', array_map('intval', $ids)) . ")";
+    
+    try {
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        echo "Produits supprimés avec succès.";
+    } catch (PDOException $e) {
+        echo "Erreur: " . $e->getMessage();
+    }
+}
+
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['ids'])) {
+    $ids = $_POST['ids'];
+    supprimer_produits($ids);
 }
 ?>
 
@@ -33,22 +44,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel='shortcut icon' type='image/x-icon' href='images/favicon/favicon.ico'/>
     <link rel="stylesheet" href="style.css">
+    <link rel='shortcut icon' type='image/x-icon' href='images/favicon/favicon.ico'/>
     <title>Supprimer Produit</title>
 </head>
 <body>
     <header>
-        <div class="logo">
+        <a href="page_acceuil.php" class="logo">
             Stockos
-        </div>
+        </a>
     </header>
+
     <main>
-        <div class="container">
-            <h2>Supprimer un Produit</h2>
+        <div class="form_supprimer_container">
+            <h2>Supprimer des Produits</h2>
             <form method="POST" action="">
-                <label for="id">ID du Produit</label>
-                <input type="number" name="id" id="id" required><br>
+                <?php
+                $products = getAllProducts();
+                if (count($products) > 0) {
+                    foreach ($products as $product) {
+                        echo '<div class="product-item">';
+                        echo '<input type="checkbox" name="ids[]" value="' . $product['id'] . '">';
+                        echo '<label>' . $product['nom'] . ' (' . $product['type'] . ')</label>';
+                        echo '</div>';
+                    }
+                } else {
+                    echo '<p>Aucun produit trouvé.</p>';
+                }
+                ?>
                 <input type="submit" value="Supprimer">
             </form>
         </div>
