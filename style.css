@@ -113,3 +113,108 @@ header {
 .logo {
     font-size: 34px; /* Taille de la police du logo */
 }
+
+/* Styles pour les boutons ajouter et supprimer */
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.action-button {
+    width: 120px;
+    height: 120px;
+    font-size: 40px;
+    border: none;
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.3s ease;
+}
+
+.add-button {
+    background-color: #4CAF50; /* Vert */
+}
+
+.add-button:hover {
+    background-color: #45a049;
+}
+
+.delete-button {
+    background-color: #f44336; /* Rouge */
+}
+
+.delete-button:hover {
+    background-color: #e53935;
+}
+
+.form_ajouter_container {
+    width: 100%;
+    max-width: 500px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin-top: 20px; /* Ajouté pour éviter que le formulaire ne soit masqué par l'en-tête */
+}
+
+.form_ajouter_container h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+}
+
+.form_ajouter_container form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.form_ajouter_container label {
+    margin-bottom: 5px;
+    text-align: left;
+    color: #555;
+    font-weight: bold;
+    align-self: flex-start;
+}
+
+.form_ajouter_container input[type="text"],
+.form_ajouter_container input[type="number"] {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form_ajouter_container input[type="submit"] {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    background-color: #4CAF50; /* Vert */
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.form_ajouter_container input[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+.form_ajouter_container select {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+}

@@ -1,8 +1,3 @@
-<?php
-include 'connexion.php';
-
-?>
-
 <!DOCTYPE html PUBLIC '-//W3C//DTD XHTML Basic 1.1//EN'
  'http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd'>
 <html xmlns='http://www.w3.org/1999/xhtml' lang='fr'>
@@ -20,5 +15,10 @@ include 'connexion.php';
         </div>
     </header>
     <main>
+        <div class="button-container">
+            <button class="action-button add-button" onclick="window.location.href='ajouter.php'">+</button>
+            <button class="action-button delete-button" onclick="window.location.href='supprimer.php'">-</button>
+        </div>
     </main>
 </body>
+</html>
