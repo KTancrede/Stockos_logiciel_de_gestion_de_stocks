@@ -15,7 +15,12 @@
         </a>
     </header>
 
-    <main>
+    <main>  
+        <div>
+            <h1 class='titre-ajout'>
+                Ajout Suppression des produits
+            </h1>
+        </div>
         <div class="button-container">
             <button class="action-button add-button" onclick="window.location.href='ajouter.php'">+</button>
             <button class="action-button delete-button" onclick="window.location.href='supprimer.php'">-</button>

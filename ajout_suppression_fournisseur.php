@@ -18,5 +18,14 @@
         </div>
     </header>
     <main>
+    <div>
+        <h1 class='titre-ajout'>
+            Ajout Suppression des Fournisseurs
+        </h1>
+    </div>
+    <div class="button-container">
+        <button class="action-button add-button" onclick="window.location.href='ajouter_f.php'">+</button>
+        <button class="action-button delete-button" onclick="window.location.href='supprimer_f.php'">-</button>
+    </div>
     </main>
 </body>

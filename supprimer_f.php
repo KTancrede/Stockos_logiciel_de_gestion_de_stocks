@@ -1,41 +1,40 @@
 <?php
 include 'connexion.php';
 
-// Fonction pour récupérer tous les produits
-function getAllProducts() {
+// Fonction pour récupérer tous les fournisseurs
+function getAllFournisseur() {
     $conn = connectDB();
-    $sql = "SELECT * FROM produits";
+    $sql = "SELECT * FROM fournisseur";
     $stmt = $conn->query($sql);
-    $products = [];
+    $fournisseur = [];
     
     if ($stmt) {
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $products[] = $row;
+            $fournisseur[] = $row;
         }
     }
     
-    return $products;
+    return $fournisseur;
 }
 
-
-// Fonction pour supprimer les produits sélectionnés
-function supprimer_produits($ids) {
+// Fonction pour supprimer les fournisseurs sélectionnés
+function supprimer_fournisseur($noms) {
     $conn = connectDB();
-    $sql = "DELETE FROM produits WHERE id IN (" . implode(',', array_map('intval', $ids)) . ")";
+    $placeholders = implode(',', array_fill(0, count($noms), '?'));
+    $sql = "DELETE FROM fournisseur WHERE nom IN ($placeholders)";
     
     try {
         $stmt = $conn->prepare($sql);
-        $stmt->execute();
-        echo "<div id='msg_ajout'>Produits supprimés avec succès.</div>";
+        $stmt->execute($noms);
+        echo "<div id='msg_ajout'>Fournisseur supprimé avec succès.</div>";
     } catch (PDOException $e) {
-        echo "Erreur: " . $e->getMessage();
+        echo "<div id='msg_ajout'>Erreur: " . $e->getMessage().'</div>';
     }
 }
 
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['ids'])) {
-    $ids = $_POST['ids'];
-    supprimer_produits($ids);
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['noms'])) {
+    $noms = $_POST['noms'];
+    supprimer_fournisseur($noms);
 }
 ?>
 
@@ -46,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['ids'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <link rel='shortcut icon' type='image/x-icon' href='images/favicon/favicon.ico'/>
-    <title>Supprimer Produit</title>
+    <title>Supprimer Fournisseur</title>
 </head>
 <body>
     <header>
@@ -54,22 +53,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['ids'])) {
             Stockos
         </a>
     </header>
-
     <main>
         <div class="form_supprimer_container">
-            <h2>Supprimer des Produits</h2>
+            <h2>Supprimer des fournisseurs</h2>
             <form method="POST" action="">
                 <?php
-                $products = getAllProducts();
-                if (count($products) > 0) {
-                    foreach ($products as $product) {
+                $fournisseurs = getAllFournisseur();
+                if (count($fournisseurs) > 0) {
+                    foreach ($fournisseurs as $fournisseur) {
                         echo '<div class="product-item">';
-                        echo '<input type="checkbox" name="ids[]" value="' . $product['id'] . '">';
-                        echo '<label>' . $product['nom'] . ' (' . $product['type'] ." / ".$product['quantite']. 'L)</label>';
+                        echo '<input type="checkbox" name="noms[]" value="' . htmlspecialchars($fournisseur['nom']) . '">';
+                        echo '<label>' . htmlspecialchars($fournisseur['nom']) . '</label>';
                         echo '</div>';
                     }
                 } else {
-                    echo '<p>Aucun produit trouvé.</p>';
+                    echo '<p>Aucun fournisseur trouvé.</p>';
                 }
                 ?>
                 <input type="submit" value="Supprimer">

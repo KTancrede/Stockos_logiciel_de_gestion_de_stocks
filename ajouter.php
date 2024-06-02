@@ -3,6 +3,7 @@ include 'connexion.php';
 $message="";
 
 function ajouter_produit($nom, $type, $marque, $quantite, $fournisseur, $prix, $quantite_max) {
+    global $message;
     $conn = connectDB();
     if ($conn) {
         try {
@@ -66,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <label for="type">Type</label>
                 <select name="type" id="type" required>
                     <option value="" disabled selected>Choisir un type</option>
-                    <option value="fû">Fût</option>
+                    <option value="fût">Fût</option>
                     <option value="soft">Soft</option>
                     <option value="hard">Hard</option>
                     <option value="vin">Vin</option>
@@ -97,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (msg) {
                 msg.style.display = 'none';
             }
-        }, 5000); 
+        }, 3000); 
     });
     </script>
 
