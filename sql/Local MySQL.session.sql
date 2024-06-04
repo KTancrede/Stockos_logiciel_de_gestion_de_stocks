@@ -1,0 +1,12 @@
+CREATE DATABASE master_db;
+
+USE master_db;
+
+CREATE TABLE bars (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    db_name VARCHAR(255) NOT NULL,
+    login VARCHAR(50) NOT NULL UNIQUE,
+    mot_de_passe VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

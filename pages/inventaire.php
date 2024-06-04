@@ -1,10 +1,12 @@
 <?php
-include 'connexion.php';
+include '../includes/connexion.php';
+include '../includes/verifier_connexion.php';
+verifier_connexion();
 
 // Fonction pour récupérer tous les produits
 function getAllProducts() {
     $conn = connectDB();
-    $sql = "SELECT id, nom, type, enStock FROM produits";
+    $sql = "SELECT id, nom, type, enStock, image FROM produits";
     $stmt = $conn->query($sql);
     $products = [];
 
@@ -24,11 +26,11 @@ $products = getAllProducts();
  'http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd'>
 <html xmlns='http://www.w3.org/1999/xhtml' lang='fr'>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel='shortcut icon' type='image/x-icon' href='images/favicon/favicon.ico'/> 
+    <link rel='stylesheet' href='../assets/css/style.css'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <link rel='shortcut icon' type='image/x-icon' href='../assets/images/favicon/favicon.ico'/> 
+    <meta http-equiv='Content-Type' content='text/html;charset=utf-8' />
     <title>Inventaire</title>
-    <link rel="stylesheet" href="style.css"> 
     <script>
         let currentIndex = 0;
         const products = <?php echo json_encode($products); ?>;
@@ -36,6 +38,8 @@ $products = getAllProducts();
         function showProduct(index) {
             const product = products[index];
             document.getElementById('product-title').innerText = product.nom + ' (' + product.type + ')';
+            document.getElementById('product-image').src = product.image;
+            document.getElementById('product-image').alt = product.nom;
             document.getElementById('enStock').value = product.enStock;
             document.getElementById('product-id').value = product.id;
 
@@ -90,6 +94,7 @@ $products = getAllProducts();
     <main>
         <div class="container">
             <div id="product-title" class="product-title"></div>
+            <img id="product-image" class="product-image" src="" alt="">
             <form method="POST" action="inventaire.php">
                 <div class="input-container">
                     <input type="number" name="enStock" id="enStock" required>

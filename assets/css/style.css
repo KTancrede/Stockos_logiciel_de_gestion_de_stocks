@@ -1,11 +1,45 @@
 body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f2f5;
     margin: 0;
-    height: 100vh;
+    padding: 0;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: #f0f2f5;
-    font-family: Arial, sans-serif;
+    min-height: 100vh;
+}
+
+header {
+    width: 100%;
+    text-align: center;
+    background-color: #333;
+    color: #fff;
+    padding: 10px 0;
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+}
+
+.logo {
+    font-size: 34px;
+    color: #fff;
+    text-decoration: none;
+}
+
+.logo:hover {
+    color: #ddd;
+}
+
+main {
+    margin-top: 60px; /* Adjusted to ensure content is below header */
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .login-container {
@@ -16,13 +50,6 @@ body {
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
-}
-
-main {
-    margin-top: 80px; /* Adjusted to ensure content is below header */
-    width: 100%;
-    display: flex;
-    justify-content: center;
 }
 
 .form_login {
@@ -105,28 +132,6 @@ main {
     background-color: #e83627;
 }
 
-/* Styles pour la barre horizontale */
-header {
-    text-align: center;
-    background-color: #333; /* Couleur de fond de la barre */
-    color: #fff; /* Couleur du texte */
-    padding: 10px 0; /* Espacement intérieur */
-    position: fixed; /* Position fixe */
-    width: 100%; /* Largeur de la barre de navigation */
-    top: 0; /* Alignement en haut */
-    z-index: 1000; /* Profondeur z pour s'assurer que la barre est au-dessus du contenu */
-}
-
-.logo {
-    font-size: 34px;
-    color: #fff;
-    text-decoration: none;
-}
-
-.logo:hover {
-    color: #ddd; /* Optionnel : Change la couleur au survol */
-}
-
 /* Styles pour les boutons ajouter et supprimer */
 .button-container {
     display: flex;
@@ -165,30 +170,35 @@ header {
     background-color: #e53935;
 }
 
-.form_ajouter_container {
+.form_ajouter_container,
+.form_supprimer_container {
     width: 100%;
-    max-width: 500px;
+    max-width: 400px;
     padding: 20px;
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
-    margin-top: 20px; /* Ajouté pour éviter que le formulaire ne soit masqué par l'en-tête */
+    margin-top: 20px;
+    box-sizing: border-box;
 }
 
-.form_ajouter_container h2 {
+.form_ajouter_container h2,
+.form_supprimer_container h2 {
     margin-bottom: 20px;
     font-size: 24px;
     color: #333;
 }
 
-.form_ajouter_container form {
+.form_ajouter_container form,
+.form_supprimer_container form {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.form_ajouter_container label {
+.form_ajouter_container label,
+.form_supprimer_container label {
     margin-bottom: 5px;
     text-align: left;
     color: #555;
@@ -197,7 +207,9 @@ header {
 }
 
 .form_ajouter_container input[type="text"],
-.form_ajouter_container input[type="number"] {
+.form_ajouter_container input[type="number"],
+.form_supprimer_container input[type="text"],
+.form_supprimer_container input[type="number"] {
     margin-bottom: 15px;
     padding: 10px;
     border: 1px solid #ddd;
@@ -207,18 +219,20 @@ header {
     box-sizing: border-box;
 }
 
-.form_ajouter_container input[type="submit"] {
+.form_ajouter_container input[type="submit"],
+.form_supprimer_container input[type="submit"] {
     padding: 10px 20px;
     border: none;
     border-radius: 4px;
-    background-color: #4CAF50; /* Vert */
+    background-color: #4CAF50; /* Green for add */
     color: white;
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
-.form_ajouter_container input[type="submit"]:hover {
+.form_ajouter_container input[type="submit"]:hover,
+.form_supprimer_container input[type="submit"]:hover {
     background-color: #45a049;
 }
 
@@ -232,69 +246,23 @@ header {
     box-sizing: border-box;
 }
 
-.form_supprimer_container {
-    width: 100%;
-    max-width: 500px;
-    padding: 20px;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    margin-top: 20px;
-}
-
-.form_supprimer_container h2 {
-    margin-bottom: 20px;
-    font-size: 24px;
-    color: #333;
-}
-
-.form_supprimer_container form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.product-item {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.product-item label {
-    margin-left: 10px;
-}
-
-.form_supprimer_container input[type="submit"] {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    background-color: #f44336; /* Rouge */
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.form_supprimer_container input[type="submit"]:hover {
-    background-color: #e53935;
-}
-
 #msg_ajout {
     margin-top: 20px;
     padding: 10px;
     background-color: #4CAF50;
     color: rgb(14, 4, 4);
     border-radius: 4px;
-    position: absolute; /* Ensure it stays in the container */
-    bottom: 20px; /* Distance from the bottom of the container */
-    left: 50%; /* Center horizontally */
-    transform: translateX(-50%); /* Center horizontally */
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
-.titre-ajout{
+.titre-ajout {
     color: #333;
-    position: relative;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 24px;
 }
 
 .stock-container {
@@ -320,7 +288,8 @@ header {
     margin-bottom: 40px;
 }
 
-.stock-table th, .stock-table td {
+.stock-table th,
+.stock-table td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: center;
@@ -419,4 +388,13 @@ header {
     background-color: #f44336;
     color: white;
     display: none; /* Cacher le bouton "Fin" par défaut */
+}
+
+.product-image {
+    display: block;
+    margin: 0 auto 20px;
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }

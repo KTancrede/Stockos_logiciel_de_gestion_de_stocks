@@ -1,5 +1,5 @@
 <?php
-include 'connexion.php';
+include '../includes/connexion.php';
 
 // Vérifiez si les données POST existent
 if (isset($_POST['id']) && isset($_POST['enStock'])) {

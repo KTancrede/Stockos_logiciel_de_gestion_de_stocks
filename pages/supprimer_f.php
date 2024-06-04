@@ -1,5 +1,7 @@
 <?php
-include 'connexion.php';
+include '../includes/connexion.php';
+include '../includes/verifier_connexion.php';
+verifier_connexion();
 
 // Fonction pour récupérer tous les fournisseurs
 function getAllFournisseur() {
@@ -41,10 +43,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['noms'])) {
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <link rel='shortcut icon' type='image/x-icon' href='images/favicon/favicon.ico'/>
+    <link rel='stylesheet' href='../assets/css/style.css'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <link rel='shortcut icon' type='image/x-icon' href='../assets/images/favicon/favicon.ico'/> 
+    <meta http-equiv='Content-Type' content='text/html;charset=utf-8' />
     <title>Supprimer Fournisseur</title>
 </head>
 <body>
