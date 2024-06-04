@@ -9,7 +9,7 @@
 </head>
 <body>
     <header>
-        <a href="page_acceuil.php" class="logo">
+        <a href="../pages/page_acceuil.php" class="logo">
             Stockos
         </a>
     </header>

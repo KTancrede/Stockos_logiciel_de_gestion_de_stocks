@@ -1,32 +1,24 @@
 <?php
-include 'connexion.php';
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-function creer_compte_utilisateur($login, $mot_de_passe) {
-    $conn = connectDB();
-    if ($conn) {
-        try {
-            $hashed_password = password_hash($mot_de_passe, PASSWORD_DEFAULT); // Hachage du mot de passe
-            $sql = "INSERT INTO utilisateurs (login, mot_de_passe) VALUES (?, ?)";
-            $stmt = $conn->prepare($sql);
-            $stmt->bindParam(1, $login);
-            $stmt->bindParam(2, $hashed_password);
+include_once '../includes/connexion.php';
+include_once 'creationDB.php';
 
-            if ($stmt->execute()) {
-                echo "Utilisateur ajouté avec succès\n";
-            } else {
-                echo "Erreur: " . implode(", ", $stmt->errorInfo());
-            }
-        } catch (PDOException $e) {
-            echo "Erreur: " . $e->getMessage();
-        }
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $barName = htmlspecialchars($_POST['bar_name']);
+    $login = htmlspecialchars($_POST['login']);
+    $mot_de_passe = htmlspecialchars($_POST['mot_de_passe']);
+
+    echo "Creating bar account for: $barName, $login"; // Debug message
+
+    if (createBarAccount($barName, $login, $mot_de_passe)) {
+        echo "Bar account created successfully.";
     } else {
-        echo "Erreur de connexion à la base de données.";
+        echo "Failed to create bar account.";
     }
+} else {
+    echo "No POST data received.";
 }
-
-// Paramètres fixes pour créer un compte utilisateur
-$login = 'tanc';
-$mot_de_passe = 'password_hashed1';
-
-creer_compte_utilisateur($login, $mot_de_passe);
 ?>

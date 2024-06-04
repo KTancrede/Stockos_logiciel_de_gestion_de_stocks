@@ -1,5 +1,6 @@
 <?php
-include 'connexion.php';
+include_once '../includes/connexion.php';
+
 function createBarDatabase($barName, $dbName) {
     $conn = connectDB();
     if ($conn) {
@@ -63,6 +64,8 @@ function createBarAccount($barName, $login, $mot_de_passe) {
             // Nom de la nouvelle base de données
             $dbName = "bar_" . strtolower(preg_replace("/[^a-zA-Z0-9]+/", "_", $barName));
 
+            echo "Creating database: $dbName"; // Debug message
+
             // Insérer les informations du bar dans la base de données maître
             $sql = "INSERT INTO bars (name, db_name, login, mot_de_passe) VALUES (?, ?, ?, ?)";
             $stmt = $conn->prepare($sql);
@@ -75,7 +78,7 @@ function createBarAccount($barName, $login, $mot_de_passe) {
                 // Créer une base de données spécifique pour ce bar
                 if (createBarDatabase($barName, $dbName)) {
                     // Ajouter l'utilisateur patron dans la base de données spécifique
-                    $barConn = new PDO("mysql:host=localhost;dbname=$dbName;charset=utf8", 'utilisateur', 'mot_de_passe');
+                    $barConn = new PDO("mysql:host=localhost;dbname=$dbName;charset=utf8", 'tanc', 'votre_mot_de_passe');
                     $barConn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                     $sql = "INSERT INTO utilisateurs (login, mot_de_passe, role) VALUES (?, ?, 'patron')";
                     $stmt = $barConn->prepare($sql);
@@ -83,27 +86,26 @@ function createBarAccount($barName, $login, $mot_de_passe) {
                     $stmt->bindParam(2, $hashed_password);
                     if ($stmt->execute()) {
                         echo "Compte bar et utilisateur patron créés avec succès.";
+                        return true;
                     } else {
                         echo "Erreur lors de la création de l'utilisateur patron.";
+                        return false;
                     }
                 } else {
                     echo "Erreur lors de la création de la base de données du bar.";
+                    return false;
                 }
             } else {
                 echo "Erreur: " . implode(", ", $stmt->errorInfo());
+                return false;
             }
         } catch (PDOException $e) {
             echo "Erreur: " . $e->getMessage();
+            return false;
         }
     } else {
         echo "Erreur de connexion à la base de données.";
+        return false;
     }
 }
-
-// Paramètres fixes pour créer un compte bar (à remplacer par des données d'un formulaire)
-$barName = 'Bar Test';
-$login = 'bartest';
-$mot_de_passe = 'motdepasse';
-
-createBarAccount($barName, $login, $mot_de_passe);
 ?>
