@@ -10,26 +10,59 @@ body {
     min-height: 100vh;
 }
 
+/* Header Styles */
 header {
     width: 100%;
-    text-align: center;
     background-color: #333;
     color: #fff;
-    padding: 10px 0;
+    padding: 10px 20px;
     position: fixed;
     top: 0;
     z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-content {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px; /* Vous pouvez ajuster cette largeur */
+    margin: 0 auto;
 }
 
 .logo {
     font-size: 34px;
     color: #fff;
     text-decoration: none;
+    flex: 1;
+    text-align: center;
 }
 
 .logo:hover {
     color: #ddd;
 }
+
+.img-reg, .img-logout {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.img-reg:hover, .img-logout:hover {
+    transform: scale(1.1);
+}
+
+.settings-link, .logout-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
 
 main {
     margin-top: 60px; /* Adjusted to ensure content is below header */
@@ -208,6 +241,8 @@ main {
 
 .form_ajouter_container input[type="text"],
 .form_ajouter_container input[type="number"],
+.form_ajouter_container input[type="password"],
+.form_ajouter_container input[type="email"],
 .form_supprimer_container input[type="text"],
 .form_supprimer_container input[type="number"] {
     margin-bottom: 15px;
@@ -398,3 +433,4 @@ main {
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+

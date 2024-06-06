@@ -4,7 +4,9 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 include '../includes/connexion.php';
-session_start();
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
 if (isset($_SESSION['user_id'])) {
     header("Location: page_acceuil.php");
@@ -17,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST["login"]) && isset($_PO
     $login = htmlspecialchars($_POST['login']);
     $mot_de_passe = htmlspecialchars($_POST['mot_de_passe']);
 
-    $conn = connectDB();
+    $conn = connectDB('master_db'); // Connect to master_db to verify bar login
     if ($conn) {
         $sql = "SELECT * FROM bars WHERE login = ?";
         $stmt = $conn->prepare($sql);
@@ -27,13 +29,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST["login"]) && isset($_PO
         if ($stmt->rowCount() == 1) {
             $bar = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            // Vérifier le mot de passe
             if (password_verify($mot_de_passe, $bar['mot_de_passe'])) {
                 $dbName = $bar['db_name'];
-                $userConn = connectDB($dbName);
-
+                $_SESSION['db_name'] = $dbName; // Store the bar's database name in session
+                $_SESSION['bar_name'] = $bar['name']; // Correctly set the bar name in session
+                $userConn = connectDB($dbName); // Connect to the specific bar's database
                 if ($userConn) {
-                    // Vérifier les informations utilisateur dans la base de données du bar
                     $sql = "SELECT * FROM utilisateurs WHERE login = ?";
                     $stmt = $userConn->prepare($sql);
                     $stmt->bindParam(1, $login);
@@ -45,7 +46,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST["login"]) && isset($_PO
                         $_SESSION['user_id'] = $user['id'];
                         $_SESSION['user_login'] = $user['login'];
                         $_SESSION['user_role'] = $user['role'];
-                        $_SESSION['db_name'] = $dbName;
 
                         header("Location: page_acceuil.php");
                         exit();
@@ -75,6 +75,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST["login"]) && isset($_PO
     <link rel='shortcut icon' type='image/x-icon' href='../assets/images/favicon/favicon.ico'/>
     <meta http-equiv='Content-Type' content='text/html;charset=utf-8'/>
     <title>Connexion</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/apple-touch-icon.png">
+    <link rel="icon" sizes="192x192" href="../assets/icons/android-chrome-192x192.png">
+    <link rel="icon" sizes="512x512" href="../assets/icons/android-chrome-512x512.png">
 </head>
 <body>
 <header>

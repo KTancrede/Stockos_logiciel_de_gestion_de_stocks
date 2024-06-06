@@ -36,17 +36,26 @@ $products = getAllProducts();
         const products = <?php echo json_encode($products); ?>;
 
         function showProduct(index) {
-            const product = products[index];
-            document.getElementById('product-title').innerText = product.nom + ' (' + product.type + ')';
-            document.getElementById('product-image').src = product.image;
-            document.getElementById('product-image').alt = product.nom;
-            document.getElementById('enStock').value = product.enStock;
-            document.getElementById('product-id').value = product.id;
-
-            document.querySelector('.back').style.display = index > 0 ? 'inline-block' : 'none';
-            document.querySelector('.next').style.display = index < products.length - 1 ? 'inline-block' : 'none';
-            document.querySelector('.fin').style.display = index === products.length - 1 ? 'inline-block' : 'none';
+        const product = products[index];
+        document.getElementById('product-title').innerText = product.nom + ' (' + product.type + ')';
+        
+        const productImage = document.getElementById('product-image');
+        if (product.image) {
+            productImage.src = product.image;
+            productImage.alt = product.nom;
+            productImage.style.display = 'block';
+        } else {
+            productImage.style.display = 'none';
         }
+
+        document.getElementById('enStock').value = product.enStock;
+        document.getElementById('product-id').value = product.id;
+
+        document.querySelector('.back').style.display = index > 0 ? 'inline-block' : 'none';
+        document.querySelector('.next').style.display = index < products.length - 1 ? 'inline-block' : 'none';
+        document.querySelector('.fin').style.display = index === products.length - 1 ? 'inline-block' : 'none';
+    }
+
 
         function navigate(direction) {
             // Sauvegarder le stock actuel avant de naviguer

@@ -5,7 +5,8 @@ verifier_connexion();
 
 $message = "";
 
-function ajouter_produit($nom, $type, $marque, $quantite, $fournisseur, $prix, $quantite_max, $image) {
+function ajouter_produit($nom, $type, $marque, $quantite, $fournisseur, $prix, $quantite_max, $image = null) {
+    global $message;
     $conn = connectDB();
     if ($conn) {
         try {
@@ -22,15 +23,15 @@ function ajouter_produit($nom, $type, $marque, $quantite, $fournisseur, $prix, $
             $stmt->bindParam(8, $image);
 
             if ($stmt->execute()) {
-                $message = "Produit ajouté avec succès";
+                $message .= "Produit ajouté avec succès";
             } else {
-                $message = "Erreur: " . implode(", ", $stmt->errorInfo());
+                $message .= "Erreur: " . implode(", ", $stmt->errorInfo());
             }
         } catch (PDOException $e) {
-            $message = "Erreur: " . $e->getMessage();
+            $message .= "Erreur: " . $e->getMessage();
         }
     } else {
-        $message = "Erreur de connexion à la base de données.";
+        $message .= "Erreur de connexion à la base de données.";
     }
 }
 
@@ -59,56 +60,53 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $fournisseur = htmlspecialchars($_POST['fournisseur']);
     $prix = htmlspecialchars($_POST['prix']);
     $quantite_max = htmlspecialchars($_POST['quantite_max']);
+    $image = null;
 
     // Gestion du téléchargement de l'image
-    $target_dir = "uploads/";
-    if (!is_dir($target_dir)) {
-        mkdir($target_dir, 0777, true);
-    }
-    $target_file = $target_dir . basename($_FILES["image"]["name"]);
-    $uploadOk = 1;
-    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-
-    // Vérifiez si l'image est une image réelle ou une fausse image
-    $check = getimagesize($_FILES["image"]["tmp_name"]);
-    if($check !== false) {
+    if (!empty($_FILES["image"]["name"])) {
+        $target_dir = "uploads/";
+        if (!is_dir($target_dir)) {
+            mkdir($target_dir, 0777, true);
+        }
+        $target_file = $target_dir . basename($_FILES["image"]["name"]);
         $uploadOk = 1;
-    } else {
-        $message .= "Le fichier n'est pas une image. ";
-        $uploadOk = 0;
-    }
+        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
-    // Vérifiez si le fichier existe déjà
-    if (file_exists($target_file)) {
-        $message .= "Désolé, le fichier existe déjà. ";
-        $uploadOk = 0;
-    }
-
-    // Vérifiez la taille du fichier
-    if ($_FILES["image"]["size"] > 2000000) {
-        $message .= "Désolé, votre fichier est trop volumineux. ";
-        $uploadOk = 0;
-    }
-
-    // Limiter les formats de fichiers
-    if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
-    && $imageFileType != "gif" ) {
-        $message .= "Désolé, seuls les fichiers JPG, JPEG, PNG & GIF sont autorisés. ";
-        $uploadOk = 0;
-    }
-
-    // Vérifiez si $uploadOk est mis à 0 par une erreur
-    if ($uploadOk == 0) {
-        $message .= "Désolé, votre fichier n'a pas été téléchargé. ";
-    // Si tout est correct, essayez de télécharger le fichier
-    } else {
-        if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
-            $image = $target_file;
-            ajouter_produit($nom, $type, $marque, $quantite, $fournisseur, $prix, $quantite_max, $image);
+        // Vérifiez si l'image est une image réelle ou une fausse image
+        $check = getimagesize($_FILES["image"]["tmp_name"]);
+        if($check !== false) {
+            $uploadOk = 1;
         } else {
-            $message .= "Désolé, une erreur s'est produite lors du téléchargement de votre fichier. ";
+            $message .= "Le fichier n'est pas une image. ";
+            $uploadOk = 0;
+        }
+
+        // Vérifiez la taille du fichier
+        if ($_FILES["image"]["size"] > 2000000) {
+            $message .= "Désolé, votre fichier est trop volumineux. ";
+            $uploadOk = 0;
+        }
+
+        // Limiter les formats de fichiers
+        if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
+            $message .= "Désolé, seuls les fichiers JPG, JPEG, PNG & GIF sont autorisés. ";
+            $uploadOk = 0;
+        }
+
+        // Vérifiez si $uploadOk est mis à 0 par une erreur
+        if ($uploadOk == 0) {
+            $message .= "Désolé, votre fichier n'a pas été téléchargé. ";
+        } else {
+            if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
+                $image = $target_file;
+            } else {
+                $message .= "Désolé, une erreur s'est produite lors du téléchargement de votre fichier. ";
+            }
         }
     }
+
+    // Ajouter le produit avec ou sans image
+    ajouter_produit($nom, $type, $marque, $quantite, $fournisseur, $prix, $quantite_max, $image);
 }
 ?>
 
@@ -137,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <label for="type">Type</label>
                 <select name="type" id="type" required>
                     <option value="" disabled selected>Choisir un type</option>
-                    <option value="fû">Fût</option>
+                    <option value="fût">Fût</option>
                     <option value="soft">Soft</option>
                     <option value="hard">Hard</option>
                     <option value="vin">Vin</option>
@@ -157,7 +155,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <input type="number" step="0.01" name="prix" id="prix" required><br>
                 <label for="quantite_max">Quantité max stockable</label>
                 <input type="number" name="quantite_max" id="quantite_max" required><br>
-                <label for="image">Image</label>
+                <label for="image">Image (optionnel)</label>
                 <input type="file" name="image" id="image" accept="image/*"><br>
                 <input type="submit" value="Ajouter">
             </form>

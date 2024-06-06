@@ -5,7 +5,7 @@
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <link rel='shortcut icon' type='image/x-icon' href='../assets/images/favicon/favicon.ico'/> 
     <meta http-equiv='Content-Type' content='text/html;charset=utf-8' />
-    <title>Ajouter Produit</title>
+    <title>Ajouter Bar</title>
 </head>
 <body>
     <header>
@@ -14,7 +14,7 @@
         </a>
     </header>
 
-        <div class="form_container">
+        <div class="form_ajouter_container">
             <h2>Créer un compte bar</h2>
             <form method="POST" action="creer_compte.php">
                 <label for="bar_name">Nom du bar</label>

@@ -5,6 +5,7 @@ function createBarDatabase($barName, $dbName) {
     $conn = connectDB();
     if ($conn) {
         try {
+            echo "Creating database: $dbName\n"; // Debug message
             $conn->exec("CREATE DATABASE `$dbName`");
             $conn->exec("USE `$dbName`");
 
@@ -19,7 +20,7 @@ function createBarDatabase($barName, $dbName) {
                     fournisseur VARCHAR(50) NOT NULL,
                     prix DECIMAL(10, 2) NOT NULL,
                     quantite_max DECIMAL(10, 2) NOT NULL,
-                    enStock DECIMAL(10, 2) NOT NULL,
+                    enStock DECIMAL(10, 2)  NULL,
                     image VARCHAR(255) DEFAULT NULL
                 )
             ");
@@ -45,11 +46,11 @@ function createBarDatabase($barName, $dbName) {
             ");
             return true;
         } catch (PDOException $e) {
-            echo "Erreur: " . $e->getMessage();
+            echo "Erreur: " . $e->getMessage(); // Debug message
             return false;
         }
     } else {
-        echo "Erreur de connexion à la base de données.";
+        echo "Erreur de connexion à la base de données."; // Debug message
         return false;
     }
 }
@@ -58,15 +59,19 @@ function createBarAccount($barName, $login, $mot_de_passe) {
     $conn = connectDB();
     if ($conn) {
         try {
-            // Hachage du mot de passe
-            $hashed_password = password_hash($mot_de_passe, PASSWORD_DEFAULT);
+            // Vérifier si le login existe déjà
+            $sql = "SELECT COUNT(*) FROM bars WHERE login = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute([$login]);
+            if ($stmt->fetchColumn() > 0) {
+                echo "Erreur: Un bar avec ce login existe déjà.\n"; // Debug message
+                return false;
+            }
 
-            // Nom de la nouvelle base de données
+            $hashed_password = password_hash($mot_de_passe, PASSWORD_DEFAULT);
             $dbName = "bar_" . strtolower(preg_replace("/[^a-zA-Z0-9]+/", "_", $barName));
 
-            echo "Creating database: $dbName"; // Debug message
-
-            // Insérer les informations du bar dans la base de données maître
+            echo "Inserting bar info into master_db\n"; // Debug message
             $sql = "INSERT INTO bars (name, db_name, login, mot_de_passe) VALUES (?, ?, ?, ?)";
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(1, $barName);
@@ -75,36 +80,39 @@ function createBarAccount($barName, $login, $mot_de_passe) {
             $stmt->bindParam(4, $hashed_password);
 
             if ($stmt->execute()) {
-                // Créer une base de données spécifique pour ce bar
+                echo "Creating specific database for the bar: $dbName\n"; // Debug message
                 if (createBarDatabase($barName, $dbName)) {
-                    // Ajouter l'utilisateur patron dans la base de données spécifique
-                    $barConn = new PDO("mysql:host=localhost;dbname=$dbName;charset=utf8", 'tanc', 'votre_mot_de_passe');
-                    $barConn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                    $sql = "INSERT INTO utilisateurs (login, mot_de_passe, role) VALUES (?, ?, 'patron')";
-                    $stmt = $barConn->prepare($sql);
-                    $stmt->bindParam(1, $login);
-                    $stmt->bindParam(2, $hashed_password);
-                    if ($stmt->execute()) {
-                        echo "Compte bar et utilisateur patron créés avec succès.";
-                        return true;
+                    $barConn = connectDB($dbName, 'tanc', 'JmdNaClmd24'); // Using connectDB function
+                    if ($barConn) {
+                        $sql = "INSERT INTO utilisateurs (login, mot_de_passe, role) VALUES (?, ?, 'patron')";
+                        $stmt = $barConn->prepare($sql);
+                        $stmt->bindParam(1, $login);
+                        $stmt->bindParam(2, $hashed_password);
+                        if ($stmt->execute()) {
+                            echo "Bar account and patron user created successfully\n"; // Debug message
+                            return true;
+                        } else {
+                            echo "Erreur lors de la création de l'utilisateur patron.\n"; // Debug message
+                            return false;
+                        }
                     } else {
-                        echo "Erreur lors de la création de l'utilisateur patron.";
+                        echo "Erreur de connexion à la nouvelle base de données.\n"; // Debug message
                         return false;
                     }
                 } else {
-                    echo "Erreur lors de la création de la base de données du bar.";
+                    echo "Erreur lors de la création de la base de données du bar.\n"; // Debug message
                     return false;
                 }
             } else {
-                echo "Erreur: " . implode(", ", $stmt->errorInfo());
+                echo "Erreur: " . implode(", ", $stmt->errorInfo()) . "\n"; // Debug message
                 return false;
             }
         } catch (PDOException $e) {
-            echo "Erreur: " . $e->getMessage();
+            echo "Erreur: " . $e->getMessage() . "\n"; // Debug message
             return false;
         }
     } else {
-        echo "Erreur de connexion à la base de données.";
+        echo "Erreur de connexion à la base de données.\n"; // Debug message
         return false;
     }
 }
