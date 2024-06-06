@@ -1,7 +1,7 @@
 <?php
 include '../includes/verifier_connexion.php';
 verifier_connexion();
-
+/* biere bouteille- liqueur - alcool -sirop*/
 function getUserRole() {
     // Remplacez ceci par votre logique pour obtenir le rôle de l'utilisateur connecté
     // Par exemple, vous pouvez récupérer le rôle à partir de la session ou de la base de données
@@ -41,14 +41,17 @@ $userRole = getUserRole();
     <main>
     <div class="home-container">
         <div class="button-group">
-            <a href="inventaire.php" class="button">Faire l'inventaire</a>
+            <a href="inventaire.php" class="button">Creer bon de commande</a>
+            <?php if ($userRole === 'patron'): ?>
             <a href="affichage_stock.php" class="button">Affichage des stocks</a>
-            <?php if ($userRole === 'patron' || $userRole === 'manager'): ?>
+            <?php endif; ?>
+            <?php if ($userRole === 'patron' || $userRole === 'responsable'): ?>
             <a href="ajout_suppression.php" class="button">Ajout/Suppression de produit</a>
             <?php endif; ?>
+            
         </div>
         <div class="button-group">
-            <?php if ($userRole === 'patron' || $userRole === 'manager'): ?>
+            <?php if ($userRole === 'patron' || $userRole === 'responsable'): ?>
             <a href="ajout_suppression_fournisseur.php" class="button">Ajout/Suppression de fournisseur</a>
             <?php endif; ?>
             <a href="liens_prod_four.php" class="button">Affichage liens produits-fournisseurs</a>

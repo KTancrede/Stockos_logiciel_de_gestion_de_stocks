@@ -1,5 +1,7 @@
 <?php
-
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 include '../includes/connexion.php';
 include '../includes/verifier_connexion.php';
@@ -9,11 +11,17 @@ $message = "";
 
 // Fonction pour récupérer les informations du bar
 function getBarInfo() {
-    $conn = connectDB('master_db');  // Connectez-vous à la base de données master_db pour récupérer les informations du bar
+    $conn = connectDB('yfyqgdsu_master_db'); // Connectez-vous à la base de données master_db pour récupérer les informations du bar
     $sql = "SELECT * FROM bars WHERE db_name = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->execute([$_SESSION['db_name']]);
-    return $stmt->fetch(PDO::FETCH_ASSOC);
+    $barInfo = [];
+
+    if ($stmt) {
+        $stmt->execute([$_SESSION['db_name']]);
+        $barInfo = $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    return $barInfo;
 }
 
 // Fonction pour récupérer les informations des utilisateurs
@@ -30,11 +38,11 @@ $usersInfo = getUsersInfo();
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Mise à jour des informations du bar
     if (isset($_POST['update_bar'])) {
-        $barName = htmlspecialchars($_POST['bar_name']);
-        $login = htmlspecialchars($_POST['bar_login']);
+        $barName = htmlspecialchars($_POST['bar_name'], ENT_QUOTES, 'UTF-8');
+        $login = htmlspecialchars($_POST['bar_login'], ENT_QUOTES, 'UTF-8');
         $mot_de_passe = !empty($_POST['bar_mot_de_passe']) ? password_hash($_POST['bar_mot_de_passe'], PASSWORD_DEFAULT) : $barInfo['mot_de_passe'];
 
-        $conn = connectDB('master_db');  // Connectez-vous à la base de données master_db pour mettre à jour les informations du bar
+        $conn = connectDB('yfyqgdsu_master_db');  // Connectez-vous à la base de données master_db pour mettre à jour les informations du bar
         $sql = "UPDATE bars SET name = ?, login = ?, mot_de_passe = ? WHERE db_name = ?";
         $stmt = $conn->prepare($sql);
         if ($stmt->execute([$barName, $login, $mot_de_passe, $_SESSION['db_name']])) {
@@ -47,12 +55,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Mise à jour des informations des utilisateurs
     if (isset($_POST['update_user'])) {
-        $userId = htmlspecialchars($_POST['user_id']);
-        $login = htmlspecialchars($_POST['user_login']);
-        $role = htmlspecialchars($_POST['user_role']);
-        $nom = htmlspecialchars($_POST['user_nom']);
-        $prenom = htmlspecialchars($_POST['user_prenom']);
-        $email = htmlspecialchars($_POST['user_email']);
+        $userId = htmlspecialchars($_POST['user_id'], ENT_QUOTES, 'UTF-8');
+        $login = htmlspecialchars($_POST['user_login'], ENT_QUOTES, 'UTF-8');
+        $role = htmlspecialchars($_POST['user_role'], ENT_QUOTES, 'UTF-8');
+        $nom = !empty($_POST['user_nom']) ? htmlspecialchars($_POST['user_nom'], ENT_QUOTES, 'UTF-8') : '';
+        $prenom = !empty($_POST['user_prenom']) ? htmlspecialchars($_POST['user_prenom'], ENT_QUOTES, 'UTF-8') : '';
+        $email = !empty($_POST['user_email']) ? htmlspecialchars($_POST['user_email'], ENT_QUOTES, 'UTF-8') : '';
         $mot_de_passe = !empty($_POST['user_mot_de_passe']) ? password_hash($_POST['user_mot_de_passe'], PASSWORD_DEFAULT) : null;
 
         $conn = connectDB($_SESSION['db_name']);  // Connectez-vous à la base de données spécifique au bar pour mettre à jour les informations des utilisateurs
@@ -100,23 +108,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <?php foreach ($usersInfo as $user) : ?>
                 <form method="POST" action="reglages.php">
                     <input type="hidden" name="update_user" value="1">
-                    <input type="hidden" name="user_id" value="<?php echo htmlspecialchars($user['id']); ?>">
-                    <label for="user_login_<?php echo $user['id']; ?>">Identifiant</label>
-                    <input type="text" name="user_login" id="user_login_<?php echo $user['id']; ?>" value="<?php echo htmlspecialchars($user['login']); ?>" required><br>
-                    <label for="user_role_<?php echo $user['id']; ?>">Rôle</label>
-                    <select name="user_role" id="user_role_<?php echo $user['id']; ?>" required>
+                    <input type="hidden" name="user_id" value="<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>">
+                    <label for="user_login_<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>">Identifiant</label>
+                    <input type="text" name="user_login" id="user_login_<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>" value="<?php echo htmlspecialchars($user['login'], ENT_QUOTES, 'UTF-8'); ?>" required><br>
+                    <label for="user_role_<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>">Rôle</label>
+                    <select name="user_role" id="user_role_<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>" required>
                         <option value="patron" <?php if ($user['role'] == 'patron') echo 'selected'; ?>>Patron</option>
                         <option value="employe" <?php if ($user['role'] == 'employe') echo 'selected'; ?>>Employé</option>
                         <option value="responsable" <?php if ($user['role'] == 'responsable') echo 'selected'; ?>>Responsable</option>
                     </select><br>
-                    <label for="user_nom_<?php echo $user['id']; ?>">Nom</label>
-                    <input type="text" name="user_nom" id="user_nom_<?php echo $user['id']; ?>" value="<?php echo htmlspecialchars($user['nom']); ?>" required><br>
-                    <label for="user_prenom_<?php echo $user['id']; ?>">Prénom</label>
-                    <input type="text" name="user_prenom" id="user_prenom_<?php echo $user['id']; ?>" value="<?php echo htmlspecialchars($user['prenom']); ?>" required><br>
-                    <label for="user_email_<?php echo $user['id']; ?>">Email</label>
-                    <input type="email" name="user_email" id="user_email_<?php echo $user['id']; ?>" value="<?php echo htmlspecialchars($user['email']); ?>" required><br>
-                    <label for="user_mot_de_passe_<?php echo $user['id']; ?>">Mot de passe (laissez vide pour ne pas changer)</label>
-                    <input type="password" name="user_mot_de_passe" id="user_mot_de_passe_<?php echo $user['id']; ?>"><br>
+                    <label for="user_nom_<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>">Nom</label>
+                    <input type="text" name="user_nom" id="user_nom_<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>" value="<?php echo !empty($user['nom']) ? htmlspecialchars($user['nom'], ENT_QUOTES, 'UTF-8') : ''; ?>" required><br>
+                    <label for="user_prenom_<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>">Prénom</label>
+                    <input type="text" name="user_prenom" id="user_prenom_<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>" value="<?php echo !empty($user['prenom']) ? htmlspecialchars($user['prenom'], ENT_QUOTES, 'UTF-8') : ''; ?>" required><br>
+                    <label for="user_email_<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>">Email</label>
+                    <input type="email" name="user_email" id="user_email_<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>" value="<?php echo !empty($user['email']) ? htmlspecialchars($user['email'], ENT_QUOTES, 'UTF-8') : ''; ?>" required><br>
+                    <label for="user_mot_de_passe_<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>">Mot de passe (laissez vide pour ne pas changer)</label>
+                    <input type="password" name="user_mot_de_passe" id="user_mot_de_passe_<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>"><br>
                     <input type="submit" value="Mettre à jour l'utilisateur">
                 </form>
             <?php endforeach; ?>

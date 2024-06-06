@@ -45,6 +45,14 @@ header {
     color: #ddd;
 }
 
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .img-reg, .img-logout {
     width: 30px;
     height: 30px;
@@ -88,6 +96,12 @@ main {
 .form_login {
     display: flex;
     flex-direction: column;
+    width: 95%;
+    /*max-width: 400px; /* Limite la largeur maximale du formulaire */
+    margin: 0 auto; /* Centre le formulaire */
+    /*padding: 20px; /* Ajoute un peu de padding pour l'espacement interne */
+    background-color: #fff; /* Fond blanc pour le formulaire */
+    border-radius: 8px; /* Bords arrondis */
 }
 
 .form_login h2 {
@@ -434,3 +448,89 @@ main {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Styles généraux */
+.containere {
+    width: 90%;
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.page-title {
+    text-align: center;
+    margin-bottom: 40px;
+    font-size: 2em;
+    color: #333;
+}
+
+.fournisseur-section {
+    margin-top: 40px;
+}
+
+.fournisseur-title {
+    font-size: 1.5em;
+    color: #555;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 10px;
+}
+
+/* Styles des tableaux */
+.produits-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #ddd;
+}
+
+.produits-table thead {
+    background-color: #333;
+    color: #fff;
+}
+
+.produits-table th, .produits-table td {
+    padding: 12px 15px;
+    text-align: left;
+}
+
+.produits-table th {
+    font-weight: bold;
+}
+
+.produits-table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.produits-table tbody tr:hover {
+    background-color: #e0e0e0;
+}
+
+.produits-table tbody tr td {
+    border-bottom: 1px solid #ddd;
+}
+
+.produits-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Styles pour les petits écrans */
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+    }
+
+    .produits-table th, .produits-table td {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .page-title, .fournisseur-title {
+        text-align: center;
+    }
+}

@@ -1,11 +1,13 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 include '../includes/verifier_connexion.php';
 verifier_connexion();
 $message = "";
 
 function getUserRole() {
-    // Remplacez ceci par votre logique pour obtenir le rôle de l'utilisateur connecté
-    // Par exemple, vous pouvez récupérer le rôle à partir de la session ou de la base de données
     return $_SESSION['user_role']; // Exemple : 'patron', 'manager', 'employe'
 }
 
@@ -19,54 +21,48 @@ if ($userRole !== 'patron') {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     include '../includes/connexion.php';
+    $conn = connectDB();
 
-    // Vérification des variables de session nécessaires
-    if (!isset($_SESSION['bar_name']) || !isset($_SESSION['db_name'])) {
-        $message = "Les informations du bar sont manquantes.";
+    $nom = $_POST['nom'];
+    $login = $_POST['login'];
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT); // Hash du mot de passe
+    $role = $_POST['role'];
+
+    // Vérifier si le login existe déjà dans la base de données spécifique au bar
+    $sql_check = "SELECT COUNT(*) FROM utilisateurs WHERE login = :login";
+    $stmt_check = $conn->prepare($sql_check);
+    $stmt_check->bindParam(':login', $login);
+    $stmt_check->execute();
+    $count = $stmt_check->fetchColumn();
+
+    if ($count > 0) {
+        $message = "Erreur : Le login existe déjà.";
     } else {
-        $nom = $_POST['nom'];
-        $login = $_POST['login'];
-        $password = password_hash($_POST['password'], PASSWORD_DEFAULT); // Hash du mot de passe
-        $role = $_POST['role'];
+        // Ajout dans la base de données spécifique au bar
+        $sql = "INSERT INTO utilisateurs (login, mot_de_passe, role, nom) VALUES (:login, :mot_de_passe, :role, :nom)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':login', $login);
+        $stmt->bindParam(':mot_de_passe', $password);
+        $stmt->bindParam(':role', $role);
+        $stmt->bindParam(':nom', $nom);
 
-        // Connexion à la base de données du bar
-        $conn = connectDB();
+        if ($stmt->execute()) {
+            // Ajout dans la base de données master_db
+            $master_conn = connectDB('yfyqgdsu_master_db'); // Connectez-vous à la base de données master_db
+            $sql_master = "INSERT INTO bars (name, login, mot_de_passe, db_name) VALUES (:name, :login, :mot_de_passe, :db_name)";
+            $stmt_master = $master_conn->prepare($sql_master);
+            $stmt_master->bindParam(':name', $nom);
+            $stmt_master->bindParam(':login', $login);
+            $stmt_master->bindParam(':mot_de_passe', $password);
+            $stmt_master->bindParam(':db_name', $_SESSION['db_name']);
 
-        try {
-            // Insertion dans la base de données du bar
-            $sql = "INSERT INTO utilisateurs (login, mot_de_passe, role, nom) VALUES (:login, :mot_de_passe, :role, :nom)";
-            $stmt = $conn->prepare($sql);
-            $stmt->bindParam(':login', $login);
-            $stmt->bindParam(':mot_de_passe', $password);
-            $stmt->bindParam(':role', $role);
-            $stmt->bindParam(':nom', $nom);
-
-            if ($stmt->execute()) {
-                // Connexion à la base de données master_db
-                $master_conn = connectDB('master_db');
-
-                // Récupération des informations de session
-                $bar_name = $_SESSION['bar_name'];
-                $db_name = $_SESSION['db_name'];
-
-                // Insertion dans master_db (table bars)
-                $master_sql = "INSERT INTO bars (name, db_name, login, mot_de_passe) VALUES (:name, :db_name, :login, :mot_de_passe)";
-                $master_stmt = $master_conn->prepare($master_sql);
-                $master_stmt->bindParam(':name', $bar_name);
-                $master_stmt->bindParam(':db_name', $db_name);
-                $master_stmt->bindParam(':login', $login);
-                $master_stmt->bindParam(':mot_de_passe', $password);
-
-                if ($master_stmt->execute()) {
-                    $message = "Utilisateur ajouté avec succès.";
-                } else {
-                    $message = "Erreur lors de l'ajout de l'utilisateur dans master_db: " . implode(", ", $master_stmt->errorInfo());
-                }
+            if ($stmt_master->execute()) {
+                $message = "Utilisateur ajouté avec succès.";
             } else {
-                $message = "Erreur lors de l'ajout de l'utilisateur dans la base de données du bar: " . implode(", ", $stmt->errorInfo());
+                $message = "Erreur lors de l'ajout de l'utilisateur dans master_db: " . implode(", ", $stmt_master->errorInfo());
             }
-        } catch (Exception $e) {
-            $message = "Erreur: " . $e->getMessage();
+        } else {
+            $message = "Erreur lors de l'ajout de l'utilisateur: " . implode(", ", $stmt->errorInfo());
         }
     }
 }
@@ -79,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel='stylesheet' href='../assets/css/style.css'>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <link rel='shortcut icon' type='image/x-icon' href='../assets/images/favicon/favicon.ico'/>
-    <meta http-equiv='Content-Type' content='text/html;charset=utf-8' />
+    <meta http-equiv='Content-Type' content='text/html;charset=utf-8'/>
     <title>Ajouter un employé - Stockos</title>
 </head>
 <body>
@@ -102,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <select name="role" id="role" required>
                     <option value="" disabled selected>Choisir un rôle</option>
                     <option value="employe">Employé</option>
-                    <option value="manager">Manager</option>
+                    <option value="responsable">Responsable</option>
                 </select><br>
                 <input type="submit" value="Ajouter">
             </form>
@@ -120,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (msg) {
                 msg.style.display = 'none';
             }
-        }, 9000); 
+        }, 5000);
     });
     </script>
 </body>

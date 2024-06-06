@@ -19,7 +19,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST["login"]) && isset($_PO
     $login = htmlspecialchars($_POST['login']);
     $mot_de_passe = htmlspecialchars($_POST['mot_de_passe']);
 
-    $conn = connectDB('master_db'); // Connect to master_db to verify bar login
+    //$conn = connectDB('master_db'); // Connect to master_db to verify bar login
+    $conn = connectDB();
     if ($conn) {
         $sql = "SELECT * FROM bars WHERE login = ?";
         $stmt = $conn->prepare($sql);
